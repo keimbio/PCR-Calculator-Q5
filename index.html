@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PCR Master Mix Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Hanken Grotesk', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            padding: 20px;
+            background: linear-gradient(135deg, #ff4545 0%, #ff8a00 25%, #ffcd3c 50%, #4ecdc4 75%, #44a08d 100%);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .calculator {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 35px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            width: 100%;
+            max-width: 750px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            color: #2d3748;
+            font-size: 2em;
+            font-weight: 700;
+            margin-bottom: 15px;
+            letter-spacing: -0.5px;
+        }
+
+        .divider {
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #ff4545, #ff8a00, #ffcd3c, #4ecdc4, #44a08d, transparent);
+            margin-bottom: 30px;
+            border-radius: 2px;
+        }
+
+        .input-section {
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            margin-bottom: 35px;
+            padding: 20px 0;
+        }
+
+        .input-row {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            margin-bottom: 25px;
+        }
+
+        .input-divider {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #ff8a00, #ffcd3c, transparent);
+            margin: 15px auto;
+            border-radius: 2px;
+            width: 60%;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .input-group label {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 8px;
+            font-size: 0.85em;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .input-group input,
+        .input-group select {
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 0.95em;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+            text-align: center;
+            font-family: 'Hanken Grotesk', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-weight: 500;
+            height: 50px;
+            width: 200px;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: #ff6b6b;
+            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+            background: white;
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 25px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .results-table thead {
+            background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+            color: white;
+        }
+
+        .results-table th {
+            padding: 18px 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.95em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .results-table th:first-child {
+            text-align: left;
+        }
+
+        .results-table th:nth-child(2),
+        .results-table th:nth-child(3) {
+            text-align: center;
+        }
+
+        .results-table tbody tr {
+            border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+            transition: background-color 0.2s ease;
+        }
+
+        .results-table tbody tr:hover {
+            background-color: rgba(255, 107, 107, 0.05);
+        }
+
+        .results-table tbody tr:last-child {
+            border-bottom: none;
+            background: rgba(78, 205, 196, 0.15);
+            font-weight: 600;
+        }
+
+        .results-table tbody tr:last-child:hover {
+            background: rgba(78, 205, 196, 0.2);
+        }
+
+        .results-table td {
+            padding: 14px 15px;
+            color: #2d3748;
+            font-weight: 500;
+        }
+
+        .results-table td:first-child {
+            font-weight: 600;
+        }
+
+        .results-table td:nth-child(2),
+        .results-table td:nth-child(3) {
+            text-align: center;
+            font-family: 'Hanken Grotesk', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .variable-text {
+            color: #805ad5 !important;
+            font-style: italic;
+            font-family: 'Hanken Grotesk', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+            font-weight: 500 !important;
+        }
+
+        .calculated-dna {
+            color: #4ecdc4 !important;
+            font-weight: 700 !important;
+        }
+
+        .placeholder-message {
+            text-align: center;
+            color: #64748b;
+            font-style: italic;
+            margin-top: 35px;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 12px;
+            border: 2px dashed rgba(255, 107, 107, 0.3);
+            font-weight: 500;
+        }
+
+        .error {
+            background: linear-gradient(135deg, #f56565, #e53e3e);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 20px;
+            display: none;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .error.show {
+            display: block;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+                @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+            
+            .calculator {
+                padding: 25px;
+                max-width: 100%;
+            }
+            
+            .input-row {
+                flex-direction: column;
+                gap: 20px;
+                align-items: center;
+            }
+            
+            .input-section {
+                height: auto;
+                padding: 15px 0;
+            }
+
+            .results-table th,
+            .results-table td {
+                padding: 12px 10px;
+                font-size: 0.9em;
+            }
+
+            .results-table th {
+                font-size: 0.85em;
+            }
+
+            .header h1 {
+                font-size: 1.6em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <div class="header">
+            <h1>PCR Master Mix Calculator</h1>
+        </div>
+        
+        <div class="divider"></div>
+
+        <div class="input-section">
+            <div class="input-row">
+                <div class="input-group">
+                    <label for="numReactions">Number of Reactions</label>
+                    <input type="number" id="numReactions" min="1" max="1000" placeholder="# rxns">
+                </div>
+                
+                <div class="input-group">
+                    <label for="rxnVolume">Reaction Volume</label>
+                    <select id="rxnVolume">
+                        <option value="25">25 µL</option>
+                        <option value="50">50 µL</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="input-divider"></div>
+
+            <div class="input-row">
+                <div class="input-group">
+                    <label for="templateConc">Template DNA Concentration (ng/µL)</label>
+                    <input type="number" id="templateConc" step="0.1" placeholder="ng/µL">
+                </div>
+                
+                <div class="input-group">
+                    <label for="desiredNg">Final DNA Concentration (ng)</label>
+                    <input type="number" id="desiredNg" step="0.1" placeholder="ng total">
+                </div>
+            </div>
+        </div>
+
+        <div id="resultsContainer">
+            <table class="results-table" id="resultsTable" style="display: none;">
+                <thead>
+                    <tr>
+                        <th>Component</th>
+                        <th>1 Rxn Volume</th>
+                        <th>Final Volume</th>
+                    </tr>
+                </thead>
+                <tbody id="resultsBody">
+                </tbody>
+            </table>
+            
+            <div id="placeholderMessage" class="placeholder-message">
+                Enter the number of reactions to see calculated volumes
+            </div>
+        </div>
+
+        <div id="error" class="error"></div>
+    </div>
+
+    <script>
+        // PCR component volumes (easily customizable)
+        const pcrComponents = {
+            25: {  // 25 µL reaction
+                'Q5 Buffer': 5.0,         // 5X Q5 Reaction Buffer -> 1X final
+                '10 mM dNTPs': 0.5,       // 10 mM dNTPs -> 200 µM final  
+                '10 µM Fwd primer': 1.25, // 10 µM Forward Primer -> 0.5 µM final
+                '10 µM Rev primer': 1.25, // 10 µM Reverse Primer -> 0.5 µM final
+                '5X GC Enhancer': 5.0,    // Optional -> 1X final
+                'Q5 Polymerase': 0.25,    // Q5 DNA Polymerase -> 0.5 units final
+                'H2O': 15.75,             // Nuclease-free water (to 25 µL minus DNA)
+                'DNA': 'variable'         // Template DNA (< 1000 ng)
+            },
+            50: {  // 50 µL reaction
+                'Q5 Buffer': 10.0,       // 5X Q5 Reaction Buffer -> 1X final
+                '10 mM dNTPs': 1.0,      // 10 mM dNTPs -> 200 µM final
+                '10 µM Fwd primer': 2.5, // 10 µM Forward Primer -> 0.5 µM final
+                '10 µM Rev primer': 2.5, // 10 µM Reverse Primer -> 0.5 µM final
+                '5X GC Enhancer': 10.0,  // Optional -> 1X final
+                'Q5 Polymerase': 0.5,    // Q5 DNA Polymerase -> 1.0 units final
+                'H2O': 31.5,             // Nuclease-free water (to 50 µL minus DNA)
+                'DNA': 'variable'        // Template DNA (< 1000 ng)
+            }
+        };
+
+        function clearMessages() {
+            document.getElementById('error').classList.remove('show');
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = message;
+            errorDiv.classList.add('show');
+        }
+
+        function calculateDNAVolume(templateConc, desiredNanograms) {
+            if (!templateConc || !desiredNanograms || templateConc <= 0) {
+                return null;
+            }
+            // C = m/V, so V = m/C (both in ng and ng/µL)
+            return desiredNanograms / templateConc;
+        }
+
+        function calculatePCR() {
+            clearMessages();
+            
+            const numReactions = parseInt(document.getElementById('numReactions').value);
+            const rxnVolume = parseInt(document.getElementById('rxnVolume').value);
+            const templateConc = parseFloat(document.getElementById('templateConc').value);
+            const desiredNanograms = parseFloat(document.getElementById('desiredNg').value);
+            
+            // If no input, show placeholder
+            if (!numReactions || numReactions < 1) {
+                document.getElementById('resultsTable').style.display = 'none';
+                document.getElementById('placeholderMessage').style.display = 'block';
+                if (numReactions < 1 && document.getElementById('numReactions').value !== '') {
+                    showError('Please enter a valid number of reactions (minimum 1).');
+                }
+                return;
+            }
+            
+            if (numReactions > 1000) {
+                showError('Maximum 1000 reactions allowed.');
+                return;
+            }
+            
+            // Hide placeholder and show table
+            document.getElementById('placeholderMessage').style.display = 'none';
+            document.getElementById('resultsTable').style.display = 'table';
+            
+            // Get component volumes for selected reaction size
+            const components = { ...pcrComponents[rxnVolume] };
+            
+            // Calculate DNA volume if template concentration and desired amount are provided
+            let dnaVolume = null;
+            let adjustedH2OVolume = components['H2O'];
+            
+            if (templateConc && desiredNanograms) {
+                dnaVolume = calculateDNAVolume(templateConc, desiredNanograms);
+                if (dnaVolume !== null) {
+                    // Adjust H2O volume to account for DNA volume
+                    adjustedH2OVolume = components['H2O'] - dnaVolume;
+                    if (adjustedH2OVolume < 0) {
+                        showError('DNA volume exceeds available space in reaction. Reduce DNA amount or increase reaction volume.');
+                        adjustedH2OVolume = 0;
+                    }
+                }
+            }
+            
+            // Generate table rows
+            let tableHTML = '';
+            let totalSingleVolume = 0;
+            let totalMasterMixVolume = 0;
+            
+            Object.entries(components).forEach(([component, volume]) => {
+                if (component === 'DNA') {
+                    if (dnaVolume !== null) {
+                        const masterMixDNAVolume = dnaVolume * numReactions;
+                        totalSingleVolume += dnaVolume;
+                        totalMasterMixVolume += masterMixDNAVolume;
+                        
+                        tableHTML += `
+                            <tr>
+                                <td>${component}</td>
+                                <td class="calculated-dna">${dnaVolume.toFixed(2)} µL</td>
+                                <td class="calculated-dna">${masterMixDNAVolume.toFixed(1)} µL</td>
+                            </tr>`;
+                    } else {
+                        tableHTML += `
+                            <tr>
+                                <td>${component}</td>
+                                <td class="variable-text">variable</td>
+                                <td class="variable-text">variable</td>
+                            </tr>`;
+                    }
+                } else if (component === 'H2O') {
+                    const masterMixH2OVolume = adjustedH2OVolume * numReactions;
+                    totalSingleVolume += adjustedH2OVolume;
+                    totalMasterMixVolume += masterMixH2OVolume;
+                    
+                    tableHTML += `
+                        <tr>
+                            <td>${component}</td>
+                            <td>${adjustedH2OVolume.toFixed(2)} µL</td>
+                            <td>${masterMixH2OVolume.toFixed(1)} µL</td>
+                        </tr>`;
+                } else {
+                    const masterMixVolume = volume * numReactions;
+                    totalSingleVolume += volume;
+                    totalMasterMixVolume += masterMixVolume;
+                    
+                    tableHTML += `
+                        <tr>
+                            <td>${component}</td>
+                            <td>${volume} µL</td>
+                            <td>${masterMixVolume.toFixed(1)} µL</td>
+                        </tr>`;
+                }
+            });
+            
+            // Add total row
+            const totalFinalVolume = dnaVolume !== null ? 
+                totalMasterMixVolume : 
+                (totalMasterMixVolume + (rxnVolume - totalSingleVolume) * numReactions);
+                
+            tableHTML += `
+                <tr>
+                    <td><strong>Total Volume</strong></td>
+                    <td><strong>${rxnVolume} µL</strong></td>
+                    <td><strong>${totalFinalVolume.toFixed(1)} µL</strong></td>
+                </tr>`;
+            
+            // Display results
+            document.getElementById('resultsBody').innerHTML = tableHTML;
+        }
+
+        // Auto-calculate on input change
+        document.getElementById('numReactions').addEventListener('input', calculatePCR);
+        document.getElementById('rxnVolume').addEventListener('change', calculatePCR);
+        document.getElementById('templateConc').addEventListener('input', calculatePCR);
+        document.getElementById('desiredNg').addEventListener('input', calculatePCR);
+
+        // Allow Enter key to calculate
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                calculatePCR();
+            }
+        });
+
+        // Initialize with placeholder
+        calculatePCR();
+    </script>
+</body>
+</html>
